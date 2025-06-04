@@ -21,13 +21,17 @@ public class UserPokemon {
     private long idPokemon;
     private String name;
     private String nature;
-    private String state;
+    private String status;
     @Column(name = "max_life")
     private long maxLife;
     @Column(name = "current_life")
     private long currentLife;
     @Column(name = "original_trainer_id")
     private long originalTrainer;
+    @Column(name = "current_experience")
+    private long currentExperience;
+    @Column(name = "max_experience")
+    private long maxExperience;
     private String item;
 
     @ManyToOne(fetch = FetchType.LAZY)
