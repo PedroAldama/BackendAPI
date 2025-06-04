@@ -8,6 +8,7 @@ import lombok.Data;
 public class DTOPokemonUserResponse {
     private Long idPokemon;
     private String name;
+    private String status;
     private String item;
     private String nature;
     private long life;
