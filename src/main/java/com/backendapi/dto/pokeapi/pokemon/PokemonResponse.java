@@ -19,5 +19,6 @@ public class PokemonResponse {
 
     private List<AbilityWrapper> abilities;
     private List<TypesWrapper> types;
+    private List<StatsWrapper> stats;
 
 }

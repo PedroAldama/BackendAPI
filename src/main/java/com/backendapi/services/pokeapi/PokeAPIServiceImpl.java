@@ -174,14 +174,14 @@ public class PokeAPIServiceImpl implements PokeAPIService{
         return List.of();
     }
     private String triggerEvolution(EvolutionDetail details, String trigger){
-        final String TRIGGER = "Trigger";
+
 
         if ("level-up".equals(trigger)) {
-            return  TRIGGER + " " + trigger + ", Level: " + details.getMinLevel();
+            return  trigger + ", Level : " + details.getMinLevel();
         } else if ("use-item".equals(trigger) && details.getItem() != null) {
-            return TRIGGER + " " + trigger + ", Item: " + details.getItem().getName();
+            return trigger + ", Item : " + details.getItem().getName();
         } else {
-            return TRIGGER + " " + trigger;
+            return trigger;
         }
     }
 

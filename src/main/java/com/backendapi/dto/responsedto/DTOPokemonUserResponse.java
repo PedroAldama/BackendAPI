@@ -11,7 +11,7 @@ public class DTOPokemonUserResponse {
     private String status;
     private String item;
     private String nature;
-    private long life;
-    private String originalTrainer;
-    private long exp;
+    private String life;
+    private long originalTrainer;
+    private String exp;
 }
