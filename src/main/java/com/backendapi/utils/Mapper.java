@@ -1,7 +1,12 @@
 package com.backendapi.utils;
 
-import com.backendapi.dto.pokeapi.TypesResponse;
+import com.backendapi.documents.Bag;
+import com.backendapi.documents.Shop;
+import com.backendapi.documents.Team;
+import com.backendapi.dto.responsedto.DTOBagResponse;
 import com.backendapi.dto.responsedto.DTOPokemonUserResponse;
+import com.backendapi.dto.responsedto.DTOShopResponse;
+import com.backendapi.dto.responsedto.DTOTeamResponse;
 import com.backendapi.entities.UserPokemon;
 
 import java.util.ArrayList;
@@ -31,5 +36,20 @@ public class Mapper {
         }
         return dtoPokemonUserResponseList;
     }
-
+    public static DTOBagResponse bagToDTOBagResponse(Bag bag) {
+        return DTOBagResponse.builder()
+                .money(bag.getMoney())
+                .evolutionItems(bag.getEvolutionItems())
+                .consumableItems(bag.getConsumableItems())
+                .build();
+    }
+    public static DTOShopResponse shopToDTOShopResponse(Shop shop){
+        return DTOShopResponse.builder()
+                .consumableItems(shop.getConsumableItems())
+                .evolutionItems(shop.getEvolutionItems())
+                .build();
+    }
+    public static DTOTeamResponse teamToDTOTeamResponse(Team team){
+        return DTOTeamResponse.builder().name(team.getName()).build();
+    }
 }

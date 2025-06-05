@@ -13,7 +13,8 @@ import java.util.HashMap;
 @Data
 public class Bag {
     @Id
-    private String idUser;
+    private String id;
     private long money;
-    private HashMap<String, Integer> items;
+    private HashMap<String, Integer> consumableItems;
+    private HashMap<String, Integer> evolutionItems;
 }

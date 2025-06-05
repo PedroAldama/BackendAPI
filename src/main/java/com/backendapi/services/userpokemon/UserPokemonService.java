@@ -11,4 +11,6 @@ public interface UserPokemonService {
     DTOPokemonUserResponse getUserPokemonById(String user, int id);
     String giveItemToUserPokemon(String user, int id, String item);
     String getItemFromUserPokemon(String user, int id);
+    String changePokemonName(String user, String newName, long idPokemon);
+    void changeStatus(String user, String newStatus, long idPokemon);
 }

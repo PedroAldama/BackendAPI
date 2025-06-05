@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 public class Team {
     @Id
-    private String idUser;
+    private String id;
     private String name;
     private Set<Long> idPokemon;
 }
