@@ -41,4 +41,9 @@ public class UserPokemonController {
     public String takeItem(@RequestParam int pokemonId) {
         return userPokemonService.getItemFromUserPokemon("Hikari",pokemonId);
     }
+
+    @PatchMapping("/pokemon/change/name")
+    public String changeName(@RequestParam int pokemonId, @RequestParam String name) {
+        return userPokemonService.changePokemonName("Hikari",name,pokemonId);
+    }
 }

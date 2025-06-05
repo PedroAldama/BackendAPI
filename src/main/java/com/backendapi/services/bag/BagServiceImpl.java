@@ -18,11 +18,13 @@ public class BagServiceImpl implements BagService{
     private final BagRepository bagRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public DTOBagResponse showBag(String user) {
         return bagToDTOBagResponse(bagRepository.findById(user).orElseThrow());
     }
 
     @Override
+    @Transactional
     public String addItemToBag(String user, String type, String item) {
         Bag bag = getBag(user);
         if(type.equalsIgnoreCase("Consumable")) {

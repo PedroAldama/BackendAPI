@@ -28,8 +28,7 @@ public class ShopServiceImpl implements ShopService{
 
     @Override
     @Transactional
-    public String buySomething(String type, String product) {
-        String user = "Hikari";
+    public String buySomething(String user, String type, String product) {
         Shop shop = getShop();
         Map<String,Integer> items;
         if(type.equalsIgnoreCase("consumable")){

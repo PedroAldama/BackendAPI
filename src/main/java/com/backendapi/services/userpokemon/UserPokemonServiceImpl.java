@@ -25,6 +25,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     private final BagService bagService;
 
     @Override
+    @Transactional
     public String caughtPokemon(String user,String name) {
         int probability = (int) (Math.random() * 255);
         int caughtRatio = pokeAPIService.getCaughtProbability(name);
@@ -51,18 +52,21 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DTOPokemonUserResponse> listAllUserPokemon(String user) {
         List<UserPokemon> pokemonList = userPokemonRepository.findAllByUser(getUserByUsername(user));
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DTOPokemonUserResponse> listAllUserPokemonByStatus(String user, String status) {
         List<UserPokemon> pokemonList = userPokemonRepository.findByUserAndStatus(getUserByUsername(user),status);
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DTOPokemonUserResponse getUserPokemonById(String user, int id) {
             UserPokemon userPokemon = getUserPokemon(user, id);
         return userPokemonToDTOPokemonUserResponse(userPokemon);
@@ -100,6 +104,24 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         pokemon.setItem("");
         userPokemonRepository.save(pokemon);
         return response + "  " + takenItem + " has been taken from " + pokemon.getName() + " and now it's in your bag";
+    }
+
+    @Override
+    @Transactional
+    public String changePokemonName(String user, String newName, long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(user,(int) idPokemon);
+        String oldName = pokemon.getName();
+        pokemon.setName(newName);
+        userPokemonRepository.save(pokemon);
+        return "Congratulations!, " + oldName + " has been changed it's name to " + pokemon.getName();
+    }
+
+    @Override
+    @Transactional
+    public void changeStatus(String user, String newStatus, long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(user, (int) idPokemon);
+        pokemon.setStatus(newStatus);
+        userPokemonRepository.save(pokemon);
     }
 
     private Users getUserByUsername(String username) {
