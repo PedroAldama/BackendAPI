@@ -12,6 +12,6 @@ import java.util.Set;
 @Data
 public class WishList {
     @Id
-    private String idUser;
+    private String id;
     private Set<String> evolutionItems;
 }
