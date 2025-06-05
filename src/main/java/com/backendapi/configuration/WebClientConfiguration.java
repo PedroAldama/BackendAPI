@@ -11,6 +11,10 @@ public class WebClientConfiguration {
     */
     @Bean
     public WebClient webClient(){
-        return WebClient.builder().baseUrl("https://pokeapi.co/api/v2/").build();
+        return WebClient.builder().baseUrl("https://pokeapi.co/api/v2/")
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize( 1024 * 1024 / 2))
+                .build();
     }
 }

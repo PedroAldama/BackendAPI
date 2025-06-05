@@ -13,7 +13,6 @@ public class DTOPokemonResponse {
     private long baseExp;
     private int height;
     private int weight;
-    private int life;
     private String evolutionMethod;
     private Set<String> types;
     private Set<String> abilities;
