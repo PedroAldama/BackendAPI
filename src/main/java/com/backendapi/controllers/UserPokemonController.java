@@ -32,12 +32,12 @@ public class UserPokemonController {
         return userPokemonService.caughtPokemon("Hikari",pokemon);
     }
 
-    @PostMapping("/itemAdd")
+    @PostMapping("/item/add")
     public String giveItem(@RequestParam String item, @RequestParam int pokemonId) {
         return userPokemonService.giveItemToUserPokemon("Hikari",pokemonId,item);
     }
 
-    @PatchMapping("/itemRemove")
+    @PatchMapping("/item/remove")
     public String takeItem(@RequestParam int pokemonId) {
         return userPokemonService.getItemFromUserPokemon("Hikari",pokemonId);
     }
