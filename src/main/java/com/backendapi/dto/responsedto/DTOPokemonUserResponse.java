@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class DTOPokemonUserResponse {
+    private long idUserPokemon;
     private Long idPokemon;
     private String name;
     private String status;

@@ -19,6 +19,7 @@ public class UserPokemonController {
     public List<DTOPokemonUserResponse> getAllUserPokemon() {
         return userPokemonService.listAllUserPokemon();
     }
+    
     @GetMapping("/status")
     public List<DTOPokemonUserResponse> getAllUserPokemon(@RequestParam String status) {
         return userPokemonService.listAllUserPokemonByStatus(status);

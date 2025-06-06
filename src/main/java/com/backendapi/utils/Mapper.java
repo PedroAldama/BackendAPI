@@ -19,6 +19,7 @@ public class Mapper {
 
     public static DTOPokemonUserResponse userPokemonToDTOPokemonUserResponse(UserPokemon userPokemon) {
         return DTOPokemonUserResponse.builder()
+                .idUserPokemon(userPokemon.getId())
                 .idPokemon(userPokemon.getIdPokemon())
                 .name(userPokemon.getName())
                 .status(userPokemon.getStatus())

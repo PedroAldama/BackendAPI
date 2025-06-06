@@ -57,7 +57,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
                     .build();
             userPokemonRepository.save(userPokemon);
 
-            return "Congratulations!! You have caught " + name + ", its id is: " + 1;
+            return "Congratulations!! You have caught " + name + ", its id is: " + userPokemon.getId();
         }
         return "Oh no, " + name  +" has escaped";
     }
