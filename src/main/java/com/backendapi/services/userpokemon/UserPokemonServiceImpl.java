@@ -128,6 +128,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     }
 
     @Override
+    @Transactional
     public String setPokemonInDayCare(long idPokemon) {
         if(userPokemonRepository.findStatusById(idPokemon).equals("PC")){
             userPokemonRepository.setStatus("DC",idPokemon);
@@ -137,8 +138,9 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     }
 
     @Override
+    @Transactional
     public String getPokemonFromDayCare(long idPokemon) {
-        String response = redisService.removePokemonFromRoom(getUser(),idPokemon);
+        String response = redisService.removePokemonFromRoom(getUser());
         String message = "Here is your pokemon!!";
         if(response.split(":").length < 2){
             return response;
@@ -160,12 +162,46 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return message;
     }
 
+    @Override
+    @Transactional
+    public String changePokemonWithOther(String username, long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(getUser(),idPokemon);
+        if(!pokemon.getStatus().equals("PC")){
+            return "Your Pokemon is not available to Swap";
+        }
+        long idPokemonUser = redisService.joinToRoomToSwap(username);
+        if(idPokemonUser == -1 || idPokemonUser == 0){
+            return "Nothing to change";
+        }
+        UserPokemon pokemonToSwap = getUserPokemon(username,idPokemonUser);
+        pokemonToSwap.setUser(usersService.getUserByUsername(getUser()));
+        pokemonToSwap.setStatus("PC");
+        pokemon.setUser(usersService.getUserByUsername(username));
+        userPokemonRepository.save(pokemonToSwap);
+        userPokemonRepository.save(pokemon);
+        redisService.deleteRoomFromSwap(username);
+        return "Your Pokemon has been changed to " + pokemonToSwap.getName();
+    }
+
+    @Override
+    @Transactional
+    public String createRoomToChange(long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(getUser(),idPokemon);
+        if(!pokemon.getStatus().equals("PC")){
+            return "Your Pokemon is not available to Swap";
+        }
+        redisService.createRoomToSwap(getUser(),idPokemon);
+        pokemon.setStatus("SP");
+        userPokemonRepository.save(pokemon);
+        return "Your Pokemon added to Room";
+    }
+
 
     private Users getUserByUsername(String username) {
         return usersService.getUserByUsername(username);
     }
-    private UserPokemon getUserPokemon(String user, int id) {
-        return userPokemonRepository.findById((long) id).orElseThrow();
+    private UserPokemon getUserPokemon(String user, long id) {
+        return userPokemonRepository.findById(id).orElseThrow();
     }
     private String getUser(){
         return getAuthenticatedUsername();
