@@ -9,15 +9,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UsersService{
     private final UsersRepository usersRepository;
-    @Override
-    public Users registerUser(Users user) {
-        return null;
-    }
-
-    @Override
-    public String loginUser(Users user) {
-        return "";
-    }
 
     @Override
     public Users getUserByUsername(String username) {

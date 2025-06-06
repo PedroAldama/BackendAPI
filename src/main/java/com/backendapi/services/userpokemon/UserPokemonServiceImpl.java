@@ -4,6 +4,7 @@ import com.backendapi.dto.pokeapi.pokemon.PokemonResponse;
 import com.backendapi.dto.responsedto.DTOPokemonUserResponse;
 import com.backendapi.entities.UserPokemon;
 import com.backendapi.entities.Users;
+import com.backendapi.exceptions.PokemonException;
 import com.backendapi.repositories.UserPokemonRepository;
 import com.backendapi.services.bag.BagService;
 import com.backendapi.services.pokeapi.PokeAPIService;
@@ -201,7 +202,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return usersService.getUserByUsername(username);
     }
     private UserPokemon getUserPokemon(String user, long id) {
-        return userPokemonRepository.findById(id).orElseThrow();
+        return userPokemonRepository.findById(id).orElseThrow(PokemonException::new);
     }
     private String getUser(){
         return getAuthenticatedUsername();

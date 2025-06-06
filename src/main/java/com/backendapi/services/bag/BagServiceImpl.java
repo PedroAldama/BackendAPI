@@ -2,6 +2,7 @@ package com.backendapi.services.bag;
 
 import com.backendapi.documents.Bag;
 import com.backendapi.dto.responsedto.DTOBagResponse;
+import com.backendapi.exceptions.BagException;
 import com.backendapi.repositories.BagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,8 @@ public class BagServiceImpl implements BagService{
     @Override
     @Transactional(readOnly = true)
     public DTOBagResponse showBag() {
-        return bagToDTOBagResponse(bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername())).orElseThrow());
+        return bagToDTOBagResponse(bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername()))
+                .orElseThrow(BagException.BagNotFoundException::new));
     }
 
     @Override
@@ -116,7 +118,8 @@ public class BagServiceImpl implements BagService{
     }
 
     private Bag getBag() {
-        return bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername())).orElseThrow();
+        return bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername()))
+                .orElseThrow(BagException.BagNotFoundException::new);
     }
 
 }
