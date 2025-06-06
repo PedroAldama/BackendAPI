@@ -13,21 +13,21 @@ public class TeamController {
 
     @GetMapping
     public DTOTeamResponse team(){
-        return teamService.showTeam("Hikari");
+        return teamService.showTeam();
     }
 
     @PostMapping
     public String createTeam(@RequestParam String name){
-        return teamService.createTeam("Hikari",name);
+        return teamService.createTeam(name);
     }
 
     @PostMapping("/add")
     public String addTeam(@RequestParam long idPokemon){
-        return teamService.addPokemonToTeam("Hikari",idPokemon);
+        return teamService.addPokemonToTeam(idPokemon);
     }
 
     @PostMapping("/change")
     public String changeTeam(@RequestParam long idPokemonPc,@RequestParam long idPokemonTeam){
-        return teamService.changePcPokemonToTeam("Hikari",idPokemonPc,idPokemonTeam);
+        return teamService.changePcPokemonToTeam(idPokemonPc,idPokemonTeam);
     }
 }

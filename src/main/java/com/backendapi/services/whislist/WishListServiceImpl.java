@@ -5,8 +5,10 @@ import com.backendapi.repositories.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import static com.backendapi.utils.VerifyItemType.verifyItemType;
+import static com.backendapi.utils.SecurityUtils.getAuthenticatedUsername;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -16,16 +18,16 @@ public class WishListServiceImpl implements WishListService {
     private final WishListRepository wishListRepository;
 
     @Override
-    public Set<String> getWishList(String user) {
-        return getWishListFromRepository(user).getEvolutionItems();
+    public Set<String> getWishList() {
+        return getWishListFromRepository(getUser()).getEvolutionItems();
     }
 
     @Override
-    public String addWishList(String user, String item) {
+    public String addWishList(String item) {
         if(!verifyItemType(item).equals("Evolution")) {
             return "Invalid item";
         }
-        WishList wishList = getWishListFromRepository(user);
+        WishList wishList = getWishListFromRepository(getUser());
         if (wishList.getEvolutionItems().add(item)){
             wishListRepository.save(wishList);
             return "WishList added";
@@ -34,8 +36,8 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public String removeWishList(String user, String item) {
-        WishList wishList = getWishListFromRepository(user);
+    public String removeWishList( String item) {
+        WishList wishList = getWishListFromRepository(getUser());
         if (wishList.getEvolutionItems().remove(item)){
             wishListRepository.save(wishList);
             return "Item from WishList was removed";
@@ -44,23 +46,32 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public String createWishList(String user) {
-        if(wishListRepository.findById(user).isPresent()){
+    public String createWishList() {
+        if(wishListRepository.findById(getUser()).isPresent()){
             return "WishList already exists";
         }
-        WishList wishList = WishList.builder().id(user).evolutionItems(new HashSet<>()).build();
+        WishList wishList = WishList.builder().id(getUser()).evolutionItems(new HashSet<>()).build();
         wishListRepository.save(wishList);
         return "Congratulations!! You have a new WishList!";
     }
 
     @Override
-    public boolean isOnWishList(String user, String item) {
-        WishList wishList = getWishListFromRepository(user);
+    public boolean isOnWishList( String item) {
+        WishList wishList = getWishListFromRepository(getUser());
         return wishList.getEvolutionItems().contains(item);
+    }
+
+    @Override
+    public List<WishList> getAllWishList() {
+        return wishListRepository.findAll();
     }
 
     private WishList getWishListFromRepository(String user) {
         return wishListRepository.findById(user).orElseThrow();
     }
+    private String getUser(){
+        return getAuthenticatedUsername();
+    }
+
 
 }

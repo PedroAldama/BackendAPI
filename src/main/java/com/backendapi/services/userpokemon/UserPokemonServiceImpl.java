@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.backendapi.utils.Mapper.*;
 import java.util.List;
 import static com.backendapi.utils.VerifyItemType.verifyItemType;
+import static com.backendapi.utils.SecurityUtils.getAuthenticatedUsername;
 @Service
 @RequiredArgsConstructor
 public class UserPokemonServiceImpl implements UserPokemonService {
@@ -26,11 +27,11 @@ public class UserPokemonServiceImpl implements UserPokemonService {
 
     @Override
     @Transactional
-    public String caughtPokemon(String user,String name) {
+    public String caughtPokemon(String name) {
         int probability = (int) (Math.random() * 255);
         int caughtRatio = pokeAPIService.getCaughtProbability(name);
         if(probability <= caughtRatio) {
-            Users userDB = usersService.getUserByUsername(user);
+            Users userDB = usersService.getUserByUsername(getUser());
             PokemonResponse pokemon = pokeAPIService.getPokemonByName(name);
             UserPokemon userPokemon = UserPokemon.builder()
                     .idPokemon(pokemon.getId())
@@ -53,31 +54,31 @@ public class UserPokemonServiceImpl implements UserPokemonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<DTOPokemonUserResponse> listAllUserPokemon(String user) {
-        List<UserPokemon> pokemonList = userPokemonRepository.findAllByUser(getUserByUsername(user));
+    public List<DTOPokemonUserResponse> listAllUserPokemon() {
+        List<UserPokemon> pokemonList = userPokemonRepository.findAllByUser(getUserByUsername(getUser()));
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<DTOPokemonUserResponse> listAllUserPokemonByStatus(String user, String status) {
-        List<UserPokemon> pokemonList = userPokemonRepository.findByUserAndStatus(getUserByUsername(user),status);
+    public List<DTOPokemonUserResponse> listAllUserPokemonByStatus( String status) {
+        List<UserPokemon> pokemonList = userPokemonRepository.findByUserAndStatus(getUserByUsername(getUser()),status);
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public DTOPokemonUserResponse getUserPokemonById(String user, int id) {
-            UserPokemon userPokemon = getUserPokemon(user, id);
+    public DTOPokemonUserResponse getUserPokemonById( int id) {
+            UserPokemon userPokemon = getUserPokemon(getUser(), id);
         return userPokemonToDTOPokemonUserResponse(userPokemon);
     }
 
     @Override
     @Transactional
-    public String giveItemToUserPokemon(String user, int id, String item) {
-        UserPokemon pokemon = getUserPokemon(user, id);
+    public String giveItemToUserPokemon( int id, String item) {
+        UserPokemon pokemon = getUserPokemon(getUser(), id);
         String type = verifyItemType(item);
-        if(bagService.removeItemFromBag(user,type,item)){
+        if(bagService.removeItemFromBag(type,item)){
             if(type.equalsIgnoreCase("Consumable")){
                 long life = pokemon.getCurrentLife();
                 long newLife = life + 30;//Actualmente todas las berry o consumable curan solo 30
@@ -86,7 +87,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
                 return item + " has been given to " + pokemon.getName() + " and current life is " + pokemon.getCurrentLife();
             }
             if(!pokemon.getItem().isEmpty()) {
-                bagService.addItemToBag(user,verifyItemType(pokemon.getItem()),pokemon.getItem());
+                bagService.addItemToBag(verifyItemType(pokemon.getItem()),pokemon.getItem());
             }
             pokemon.setItem(item);
             userPokemonRepository.save(pokemon);
@@ -97,10 +98,10 @@ public class UserPokemonServiceImpl implements UserPokemonService {
 
     @Override
     @Transactional
-    public String getItemFromUserPokemon(String user, int id) {
-        UserPokemon pokemon = getUserPokemon(user, id);
+    public String getItemFromUserPokemon( int id) {
+        UserPokemon pokemon = getUserPokemon(getUser(), id);
         String takenItem = pokemon.getItem();
-        String response = bagService.addItemToBag(user,verifyItemType(pokemon.getItem()),pokemon.getItem());
+        String response = bagService.addItemToBag(verifyItemType(pokemon.getItem()),pokemon.getItem());
         pokemon.setItem("");
         userPokemonRepository.save(pokemon);
         return response + "  " + takenItem + " has been taken from " + pokemon.getName() + " and now it's in your bag";
@@ -108,8 +109,8 @@ public class UserPokemonServiceImpl implements UserPokemonService {
 
     @Override
     @Transactional
-    public String changePokemonName(String user, String newName, long idPokemon) {
-        UserPokemon pokemon = getUserPokemon(user,(int) idPokemon);
+    public String changePokemonName(String newName, long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(getUser(),(int) idPokemon);
         String oldName = pokemon.getName();
         pokemon.setName(newName);
         userPokemonRepository.save(pokemon);
@@ -118,8 +119,8 @@ public class UserPokemonServiceImpl implements UserPokemonService {
 
     @Override
     @Transactional
-    public void changeStatus(String user, String newStatus, long idPokemon) {
-        UserPokemon pokemon = getUserPokemon(user, (int) idPokemon);
+    public void changeStatus( String newStatus, long idPokemon) {
+        UserPokemon pokemon = getUserPokemon(getUser(), (int) idPokemon);
         pokemon.setStatus(newStatus);
         userPokemonRepository.save(pokemon);
     }
@@ -129,5 +130,8 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     }
     private UserPokemon getUserPokemon(String user, int id) {
         return userPokemonRepository.findById((long) id).orElseThrow();
+    }
+    private String getUser(){
+        return getAuthenticatedUsername();
     }
 }

@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.backendapi.utils.Mapper.bagToDTOBagResponse;
+import static com.backendapi.utils.SecurityUtils.getAuthenticatedUsername;
 @Service
 @RequiredArgsConstructor
 public class BagServiceImpl implements BagService{
@@ -19,14 +21,14 @@ public class BagServiceImpl implements BagService{
 
     @Override
     @Transactional(readOnly = true)
-    public DTOBagResponse showBag(String user) {
-        return bagToDTOBagResponse(bagRepository.findById(user).orElseThrow());
+    public DTOBagResponse showBag() {
+        return bagToDTOBagResponse(bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername())).orElseThrow());
     }
 
     @Override
     @Transactional
-    public String addItemToBag(String user, String type, String item) {
-        Bag bag = getBag(user);
+    public String addItemToBag(String type, String item) {
+        Bag bag = getBag();
         if(type.equalsIgnoreCase("Consumable")) {
             bag.getConsumableItems().putIfAbsent(item, 0);
             bag.getConsumableItems().put(item, bag.getConsumableItems().get(item) + 1);
@@ -45,8 +47,8 @@ public class BagServiceImpl implements BagService{
 
     @Override
     @Transactional
-    public boolean removeItemFromBag(String user, String type, String item) {
-        Bag bag = getBag(user);
+    public boolean removeItemFromBag(String type, String item) {
+        Bag bag = getBag();
         Map<String,Integer> items = type.equalsIgnoreCase("consumable")
                 ? bag.getConsumableItems() : bag.getEvolutionItems();
 
@@ -63,8 +65,8 @@ public class BagServiceImpl implements BagService{
 
     @Override
     @Transactional
-    public String useItem(String user, String type, String item) {
-        Bag bag = getBag(user);
+    public String useItem(String type, String item) {
+        Bag bag = getBag();
         Map<String,Integer> items = type.equalsIgnoreCase("consumable")
                 ? bag.getConsumableItems() : bag.getEvolutionItems();
 
@@ -82,14 +84,14 @@ public class BagServiceImpl implements BagService{
 
     @Override
     @Transactional(readOnly = true)
-    public long checkMoney(String user) {
-        return getBag(user).getMoney();
+    public long checkMoney() {
+        return getBag().getMoney();
     }
 
     @Override
     @Transactional
-    public long setNewValance(String user, long amount, String operation) {
-        Bag bag = getBag(user);
+    public long setNewValance( long amount, String operation) {
+        Bag bag = getBag();
         if(operation.equalsIgnoreCase("add")) {
             bag.setMoney(bag.getMoney() + amount);
         }else if(operation.equalsIgnoreCase("sub")) {
@@ -113,8 +115,8 @@ public class BagServiceImpl implements BagService{
         return "You have a new Bag!";
     }
 
-    private Bag getBag(String user) {
-        return bagRepository.findById(user).orElseThrow();
+    private Bag getBag() {
+        return bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername())).orElseThrow();
     }
 
 }

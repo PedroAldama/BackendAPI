@@ -17,33 +17,33 @@ public class UserPokemonController {
 
     @GetMapping
     public List<DTOPokemonUserResponse> getAllUserPokemon() {
-        return userPokemonService.listAllUserPokemon("Hikari");
+        return userPokemonService.listAllUserPokemon();
     }
     @GetMapping("/status")
     public List<DTOPokemonUserResponse> getAllUserPokemon(@RequestParam String status) {
-        return userPokemonService.listAllUserPokemonByStatus("Hikari",status);
+        return userPokemonService.listAllUserPokemonByStatus(status);
     }
     @GetMapping("/pokemon")
     public DTOPokemonUserResponse getUserPokemon(@RequestParam int id) {
-        return userPokemonService.getUserPokemonById("Hikari",id);
+        return userPokemonService.getUserPokemonById(id);
     }
     @PostMapping("/caught")
     public String caughtPokemon(@RequestParam String pokemon) {
-        return userPokemonService.caughtPokemon("Hikari",pokemon);
+        return userPokemonService.caughtPokemon(pokemon);
     }
 
     @PostMapping("/item/add")
     public String giveItem(@RequestParam String item, @RequestParam int pokemonId) {
-        return userPokemonService.giveItemToUserPokemon("Hikari",pokemonId,item);
+        return userPokemonService.giveItemToUserPokemon(pokemonId,item);
     }
 
     @PatchMapping("/item/remove")
     public String takeItem(@RequestParam int pokemonId) {
-        return userPokemonService.getItemFromUserPokemon("Hikari",pokemonId);
+        return userPokemonService.getItemFromUserPokemon(pokemonId);
     }
 
     @PatchMapping("/pokemon/change/name")
     public String changeName(@RequestParam int pokemonId, @RequestParam String name) {
-        return userPokemonService.changePokemonName("Hikari",name,pokemonId);
+        return userPokemonService.changePokemonName(name,pokemonId);
     }
 }
