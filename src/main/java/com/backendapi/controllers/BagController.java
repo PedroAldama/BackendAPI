@@ -14,12 +14,12 @@ public class BagController {
 
     @GetMapping
     public DTOBagResponse getMyBag() {
-        return bagService.showBag("Hikari");
+        return bagService.showBag();
     }
 
     @GetMapping("/money/check")
     public long checkMoney(){
-        return bagService.checkMoney("Hikari");
+        return bagService.checkMoney();
     }
 
 }

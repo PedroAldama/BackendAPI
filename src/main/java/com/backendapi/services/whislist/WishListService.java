@@ -1,11 +1,15 @@
 package com.backendapi.services.whislist;
 
+import com.backendapi.documents.WishList;
+
+import java.util.List;
 import java.util.Set;
 
 public interface WishListService {
-    Set<String> getWishList(String user);
-    String addWishList(String user, String item);
-    String removeWishList(String user, String item);
-    String createWishList(String user);
-    boolean isOnWishList(String user, String item);
+    Set<String> getWishList();
+    String addWishList(String item);
+    String removeWishList(String item);
+    String createWishList();
+    boolean isOnWishList(String item);
+    List<WishList> getAllWishList();
 }

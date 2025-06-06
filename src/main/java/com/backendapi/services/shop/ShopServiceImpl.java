@@ -1,6 +1,5 @@
 package com.backendapi.services.shop;
 
-import com.backendapi.documents.Bag;
 import com.backendapi.documents.Shop;
 import com.backendapi.dto.responsedto.DTOShopResponse;
 import com.backendapi.repositories.ShopRepository;
@@ -28,7 +27,7 @@ public class ShopServiceImpl implements ShopService{
 
     @Override
     @Transactional
-    public String buySomething(String user, String type, String product) {
+    public String buySomething(String type, String product) {
         Shop shop = getShop();
         Map<String,Integer> items;
         if(type.equalsIgnoreCase("consumable")){
@@ -40,17 +39,17 @@ public class ShopServiceImpl implements ShopService{
         }
         if(!items.containsKey(product)) return "That is not a valid product";
 
-        long userMoney = bagService.checkMoney(user);
+        long userMoney = bagService.checkMoney();
 
         if(userMoney < items.get(product)) return "You don't have enough money";
 
-        bagService.addItemToBag(user,type,product);
-        bagService.setNewValance(user,items.get(product),"sub");
+        bagService.addItemToBag(type,product);
+        bagService.setNewValance(items.get(product),"sub");
 
         items.remove(product);
         shopRepository.save(shop);
 
-        return "You have bought " + product + ", your new valance is " + bagService.checkMoney(user);
+        return "You have bought " + product + ", your new valance is " + bagService.checkMoney();
     }
 
     @Override
