@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+/**
+ * @author Pedro Aldama
+ * Roles que pueden tener los usuarios
 
+ */
 @Entity
 @Data
 @Table(name = "roles")

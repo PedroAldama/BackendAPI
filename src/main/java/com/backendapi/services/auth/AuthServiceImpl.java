@@ -20,7 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+/**
+ * @author Pedro Aldama
+ * Clase de servicio para la autentificacion de los usuarios y registros de ellos
 
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -31,6 +35,11 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final BagService bagService;
 
+    /**
+     * @author Pedro Aldama
+     * @param userCredentialRequest Dto de request para obtener las credenciales del usuario
+     * @return String retorna un string que consta del jwt para que pueda ingresar a los endpoints privados
+     */
     @Transactional
     @Override
     public String login(UserCredentialRequest userCredentialRequest) {
@@ -44,7 +53,13 @@ public class AuthServiceImpl implements AuthService {
         // Genera el token
         return jwtTokenProvider.generateToken(authentication);
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param userRegisterRequest Dto de request para obtener los datos de registro del usuario
+     *                            estos tienen validadores para evitar que sean nulos o vacios
+     *
+     * @return DTOUserResponse retorna el correo y nombre de usuario
+     */
     @Override
     @Transactional
     public DTOUserResponse registerUser(UserRegisterRequest userRegisterRequest) {

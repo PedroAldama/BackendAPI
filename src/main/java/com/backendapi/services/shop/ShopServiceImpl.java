@@ -2,7 +2,6 @@ package com.backendapi.services.shop;
 
 import com.backendapi.documents.Shop;
 import com.backendapi.dto.responsedto.DTOShopResponse;
-import com.backendapi.exceptions.PokeApiException;
 import com.backendapi.repositories.ShopRepository;
 import com.backendapi.services.bag.BagService;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,24 @@ public class ShopServiceImpl implements ShopService{
     private final ShopRepository shopRepository;
     private final BagService bagService;
     private final WebClient webClient;
-
+    /**
+     * @author Pedro Aldama
+     * @return DTOShopResponse muestra la tienda
+     */
     @Override
     public DTOShopResponse showShop() {
         Shop shop = getShop();
         return shopToDTOShopResponse(shop);
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param type el tipo de item que se comprara
+     * @param product el nombre del item
+     * @return String puede retornar varias opciones de acuerdo a lo que se quiere comprar
+     * si el dinero no alcanza, si el tipo no es valido, si no existe el objeto y si se llego
+     * a comprar junto a tu nuevo monto de money en bag
+     */
     @Override
     @Transactional
     public String buySomething(String type, String product) {
@@ -57,7 +67,11 @@ public class ShopServiceImpl implements ShopService{
 
         return "You have bought " + product + ", your new valance is " + bagService.checkMoney();
     }
-
+    /**
+     * @author Pedro Aldama
+     * Actualiza el stock de la tienda a las 00:00 consultando a la Pokeapi y toma 5 elementos
+     * al azar de medicine y evolution
+     */
     @Override
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")

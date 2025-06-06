@@ -20,7 +20,11 @@ public class TeamServiceImpl implements TeamService{
 
     private final TeamRepository teamRepository;
     private final UserPokemonService userPokemonService;
-
+    /**
+     * @author Pedro Aldama
+     * @return DTOTeamResponse respuesta para que el usuario observe el nombre de su equipo
+     * y los datos de los pokemon en el
+     */
     @Override
     @Transactional(readOnly = true)
     public DTOTeamResponse showTeam() {
@@ -33,7 +37,12 @@ public class TeamServiceImpl implements TeamService{
         dtoTeamResponse.setMembersTeam(teamPokemon);
         return  dtoTeamResponse;
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param name el nombre del equipo
+     * @return String En caso de que no exista un equipo de ese usuario, se crea
+     * de otra manera se le dice que ya tiene uno
+     */
     @Override
     @Transactional
     public String createTeam( String name) {
@@ -44,7 +53,12 @@ public class TeamServiceImpl implements TeamService{
         teamRepository.save(team);
         return "Congratulations! You have created a new team, Team: " + team.getName();
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param idPokemon id del usuarioPokemon
+     * @return String si el pokemon esta disponible y hay espacio, se agrega
+     * de otra manera se notifica que no se agrego
+     */
     @Override
     @Transactional
     public String addPokemonToTeam(long idPokemon) {
@@ -61,6 +75,13 @@ public class TeamServiceImpl implements TeamService{
         return "You already have this Pokemon in your team";
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param idPokemonPc el id del pokemon en PC
+     * @param idPokemonTeam el id pokemon en el team
+     * @return String cambia entre esos pokemon, si alguno no se encuentra disponible
+     * por su status, se notifica que no fue posible
+     */
     @Override
     @Transactional
     public String changePcPokemonToTeam(long idPokemonPc, long idPokemonTeam) {

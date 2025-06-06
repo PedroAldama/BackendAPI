@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Mapper {
     private Mapper(){
-        //Constructor privado, esta clase solo funciona como apoyo para convertir
+        //Constructor privado, esta clase solo funciona como apoyo para convertir a DTOs
     }
 
     public static DTOPokemonUserResponse userPokemonToDTOPokemonUserResponse(UserPokemon userPokemon) {

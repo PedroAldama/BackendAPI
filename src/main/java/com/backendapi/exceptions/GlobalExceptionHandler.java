@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+/**
+ * @author Pedro Aldama
+ * Clase que maneja los principales Exception
 
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final String ERROR = "error";
