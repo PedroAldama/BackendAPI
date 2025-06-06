@@ -6,6 +6,7 @@ import com.backendapi.dto.pokeapi.evolution.EvolutionDetail;
 import com.backendapi.dto.pokeapi.evolution.EvolutionTriggerResponse;
 import com.backendapi.dto.pokeapi.evolution.EvolvesTo;
 import com.backendapi.dto.pokeapi.pokemon.PokemonResponse;
+import com.backendapi.exceptions.PokeApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,10 @@ public class PokeAPIServiceImpl implements PokeAPIService{
         return webClient.get()
                 .uri("/pokemon/{name}", name)
                 .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        clientResponse -> Mono.error(new PokeApiException("Pokemon not found"))
+                )
                 .bodyToMono(PokemonResponse.class)
                 .block();
     }
@@ -56,6 +61,10 @@ public class PokeAPIServiceImpl implements PokeAPIService{
              String stringValue =   webClient.get()
                 .uri("/pokemon-species/{name}", name)
                 .retrieve()
+                     .onStatus(
+                             status -> status.value() == 404,
+                             clientResponse -> Mono.error(new PokeApiException("Pokemon not found"))
+                     )
                 .bodyToMono(JsonNode.class)
                 .map(jsonNode -> jsonNode.path("capture_rate").asText())
                 .block();
@@ -68,6 +77,10 @@ public class PokeAPIServiceImpl implements PokeAPIService{
     public String getEvolutionTrigger(String name) {
 
         String evolutionUri = webClient.get().uri("/pokemon-species/{name}",name).retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        clientResponse -> Mono.error(new PokeApiException("Pokemon not found"))
+                )
                 .bodyToMono(JsonNode.class)
                 .map(jn -> jn.path("evolution_chain").get("url").asText())
                 .block();
@@ -97,6 +110,10 @@ public class PokeAPIServiceImpl implements PokeAPIService{
         JsonNode response =  webClient.get()
                 .uri("/generation/{generation}",generation)
                 .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        clientResponse -> Mono.error(new PokeApiException("Generation not found"))
+                )
                 .bodyToMono(JsonNode.class)
                 .block();
         if(response != null){
@@ -132,6 +149,10 @@ public class PokeAPIServiceImpl implements PokeAPIService{
         return webClient.get()
                 .uri("/generation/{gen}", generation)
                 .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        clientResponse -> Mono.error(new PokeApiException("Generation not found"))
+                )
                 .bodyToMono(GenerationResponse.class)
                 .flatMapMany(response -> Flux.fromIterable(response.getPokemonSpecies()))
                 .map(GenerationResponse.PokemonSpecies::getName)
