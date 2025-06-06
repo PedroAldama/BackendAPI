@@ -46,4 +46,23 @@ public class UserPokemonController {
     public String changeName(@RequestParam int pokemonId, @RequestParam String name) {
         return userPokemonService.changePokemonName(name,pokemonId);
     }
+
+    @PostMapping("/swap")
+    public String createRoomToSwap(@RequestParam long idPokemon){
+        return userPokemonService.createRoomToChange(idPokemon);
+    }
+    @PostMapping("/swap/other")
+    public String swapPokemon(@RequestParam long idPokemon, @RequestParam String trainer){
+        return userPokemonService.changePokemonWithOther(trainer,idPokemon);
+    }
+
+    @PostMapping("/daycare")
+    public String putPokemonInDayCare(@RequestParam long idPokemon){
+        return userPokemonService.setPokemonInDayCare(idPokemon);
+    }
+
+    @GetMapping("/daycare/collect")
+    public String getPokemonFromDayCare(@RequestParam long idPokemon){
+        return userPokemonService.getPokemonFromDayCare(idPokemon);
+    }
 }

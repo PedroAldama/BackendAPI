@@ -15,5 +15,6 @@ public interface UserPokemonService {
     void changeStatus(String newStatus, long idPokemon);
     String setPokemonInDayCare(long idPokemon);
     String getPokemonFromDayCare(long idPokemon);
-
+    String changePokemonWithOther(String username,long idPokemon);
+    String createRoomToChange(long idPokemon);
 }

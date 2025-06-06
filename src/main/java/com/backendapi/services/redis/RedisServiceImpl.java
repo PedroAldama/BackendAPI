@@ -19,9 +19,8 @@ public class RedisServiceImpl implements RedisService{
 
     @Override
     @Transactional
-    public String createRoomToSwap(String user, long idUserPokemon) {
+    public void createRoomToSwap(String user, long idUserPokemon) {
         stringRedisTemplate.opsForValue().set(ROOM + user, String.valueOf(idUserPokemon));
-        return "Room created";
     }
 
     @Override
@@ -30,6 +29,11 @@ public class RedisServiceImpl implements RedisService{
         String idPokemon = stringRedisTemplate.opsForValue().get(ROOM + roomName);
         if(idPokemon == null) { return 0; }
         return Long.parseLong(idPokemon);
+    }
+
+    @Override
+    public void deleteRoomFromSwap(String roomName) {
+        stringRedisTemplate.delete(ROOM+roomName);
     }
 
     @Override
@@ -47,7 +51,7 @@ public class RedisServiceImpl implements RedisService{
 
     @Override
     @Transactional
-    public String removePokemonFromRoom(String user, long idPokemonUser) {
+    public String removePokemonFromRoom(String user) {
         String storedData = stringRedisTemplate.opsForValue().get(DAYCARE + user);
         if(storedData == null) return "You don't have this Pokemon in Day Care";
 
