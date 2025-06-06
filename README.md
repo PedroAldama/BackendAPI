@@ -44,25 +44,6 @@ Tecnologias:
 
 Esta es la documentación del backend para la aplicación de gestión de Pokémon. La API permite registrar usuarios, iniciar sesión, consultar información de Pokémon, gestionar mochilas, resolver acertijos, comprar ítems, formar equipos, capturar Pokémon y mucho más.
 
-## 📌 ¿Qué puedes hacer con esta app?
-
-- 🔐 Registrar e iniciar sesión como usuario.
-- 🔎 Consultar Pokémon por generación o tipo.
-- 🧩 Resolver acertijos de nombres mezclados.
-- 🎒 Gestionar una mochila con dinero e ítems.
-- 🛒 Comprar ítems evolutivos o consumibles.
-- 🧬 Capturar Pokémon y asignarles ítems.
-- 🧑‍🤝‍🧑 Crear equipos y agregar o intercambiar Pokémon.
-- ⭐ Crear y gestionar una lista de deseos (wishlist).
-- 🏡 Dejar Pokémon en la guardería (daycare).
-- 🔁 Intercambiar Pokémon con otros entrenadores.
-
-
-## Documentation
-
-[Documentation]([https://drive.google.com/drive/u/1/folders/17AF22yyLH78NmX0Dlo652BZ-rGH7ydpC])
-
-
 ## 📂 Endpoints Públicos
 
 Estos endpoints no requieren autenticación.
