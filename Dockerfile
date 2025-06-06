@@ -1,4 +1,4 @@
-# Usa Java 17 como base
+
 FROM eclipse-temurin:21-jdk-alpine
 LABEL authors="Pedro"
 
