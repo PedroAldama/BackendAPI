@@ -28,6 +28,13 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     private final BagService bagService;
     private final RedisService redisService;
 
+    /**
+     * @author Pedro Aldama
+     * @param name el nombre o id del pokemon
+     * @return String se realiza un numero al azar, si este es igual o menor a la
+     * probabilidad de captura del pokemon buscado en PokeApi, se agrega a la BD en mysql
+     * y se le asigna a usuario, de otra manera puede seguir intentando
+     */
     @Override
     @Transactional
     public String caughtPokemon(String name) {
@@ -54,7 +61,12 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         }
         return "Oh no, " + name  +" has escaped";
     }
+    /**
+     * @author Pedro Aldama
 
+     * @return List muestra una lista con los detalles de los pokemon atrapados del usuario
+     * no importa su status
+     */
     @Override
     @Transactional(readOnly = true)
     public List<DTOPokemonUserResponse> listAllUserPokemon() {
@@ -62,6 +74,12 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param status status por el que se buscan
+     * @return List muestra una lista con los detalles de los pokemon atrapados del usuario
+     *  filtrando su status
+     */
     @Override
     @Transactional(readOnly = true)
     public List<DTOPokemonUserResponse> listAllUserPokemonByStatus( String status) {
@@ -69,6 +87,11 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return listUserPokemonToDTOPokemonUserResponse(pokemonList);
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param id id de userPokemon
+     * @return DTOPokeonUserResponse muestra los detalles del pokeon con ese id de captura
+     */
     @Override
     @Transactional(readOnly = true)
     public DTOPokemonUserResponse getUserPokemonById( int id) {
@@ -76,6 +99,14 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return userPokemonToDTOPokemonUserResponse(userPokemon);
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param id id del pokemon
+     * @param item nombre del item que se le dara al pokemon
+     * @return String dependiendo del tipo de item tendrá un comportamiento diferente:
+     * si es medicinal curará al pokemon, si es evolutivo se lo equipara, si el pokemon
+     * ya tiene uno, este item será intercambiado y regresará a la mochila
+     */
     @Override
     @Transactional
     public String giveItemToUserPokemon( int id, String item) {
@@ -99,6 +130,11 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return "You don't have " + item + " in this bag";
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param id  id del pokemon
+     * @return String extrae el item del pokemon y lo almacena en la mochila si tenia uno
+     */
     @Override
     @Transactional
     public String getItemFromUserPokemon( int id) {
@@ -109,7 +145,12 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         userPokemonRepository.save(pokemon);
         return response + "  " + takenItem + " has been taken from " + pokemon.getName() + " and now it's in your bag";
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param newName nuevo nombre del pokemon
+     * @param idPokemon id del userPokemon que se quiere cambiar
+     * @return String muestra un mensaje si se pudo cambiar el nombre o no
+     */
     @Override
     @Transactional
     public String changePokemonName(String newName, long idPokemon) {
@@ -120,6 +161,12 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return "Congratulations!, " + oldName + " has been changed it's name to " + pokemon.getName();
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param newStatus nuevo status del pokemon
+     * @param idPokemon id del userPokemon que se quiere cambiar
+     * función que sirve para cambiar de estado a un pokemon, puede ser PC,DC,Team o en intercambio
+     */
     @Override
     @Transactional
     public void changeStatus( String newStatus, long idPokemon) {
@@ -127,7 +174,11 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         pokemon.setStatus(newStatus);
         userPokemonRepository.save(pokemon);
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param idPokemon id del userPokemon que se quiere depositar
+     * @return String muestra un mensaje de que el pokemon está en DayCare, su status cambia a DC
+     */
     @Override
     @Transactional
     public String setPokemonInDayCare(long idPokemon) {
@@ -137,7 +188,14 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         }
         return "Your Pokemon is not available to DayCare";
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param idPokemon id del userPokemon que se quiere obtener
+     * @return String muestra un mensaje de cuando el pokemon es recolectado
+     * se calcula la nueva experiencia de acuerdo al tiempo pasado en DC
+     * si excede su experiencia maxima, este puede evolucionar si tiene ese trigger
+     * Se usa PokeApi para buscar el trigger y el nombre y id de la siguiente evolution
+     */
     @Override
     @Transactional
     public String getPokemonFromDayCare(long idPokemon) {
@@ -163,6 +221,14 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         return message;
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param username usuario con quien intercambiar
+     * @param idPokemon id del userPokemon que se quiere cambiar
+     * @return String muestra un mensaje de que el pokemon se ha intercambiado
+     * el userPokemon->id se intercambia, cambiando de propietario del pokemon
+     * se usa redis para almacenar Id de cada pokemon a intercambiar
+     */
     @Override
     @Transactional
     public String changePokemonWithOther(String username, long idPokemon) {
@@ -183,7 +249,12 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         redisService.deleteRoomFromSwap(username);
         return "Your Pokemon has been changed to " + pokemonToSwap.getName();
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param idPokemon id del userPokemon que se quiere cambiar
+     * @return String muestra un mensaje de que el pokemon está listo para intercambio
+     * se crea una sala en redis para que otro entrenador pueda consultarla e intercambiar
+     */
     @Override
     @Transactional
     public String createRoomToChange(long idPokemon) {

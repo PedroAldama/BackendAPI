@@ -4,7 +4,11 @@ import com.backendapi.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+/**
+ * @author Pedro Aldama
+ * Funcion que se inicia al arrancar el programa para crear los roles en la BD
 
+ */
 @Component
 @RequiredArgsConstructor
 public class DataInitializerRoles implements CommandLineRunner {

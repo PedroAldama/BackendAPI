@@ -14,18 +14,37 @@ import java.util.Objects;
 
 import static com.backendapi.utils.Mapper.bagToDTOBagResponse;
 import static com.backendapi.utils.SecurityUtils.getAuthenticatedUsername;
+
+/**
+ * @author Pedro Aldama
+ * Servicio que se encarga de la mochila del jugador
+ */
 @Service
 @RequiredArgsConstructor
 public class BagServiceImpl implements BagService{
 
     private final BagRepository bagRepository;
 
+    /**
+     * @author Pedro Aldama
+     * @return retorna un DTOBagResponse que consta de Money, y Map de consumableItems
+     * Map de evolution Items
+
+     */
     @Override
     @Transactional(readOnly = true)
     public DTOBagResponse showBag() {
         return bagToDTOBagResponse(bagRepository.findById(Objects.requireNonNull(getAuthenticatedUsername()))
                 .orElseThrow(BagException.BagNotFoundException::new));
     }
+    /**
+     * @author Pedro Aldama
+     * @param type Tipo de item que se agregara, puede ser Consumable o Evolution
+     * @param item Nombre del item que se quiere asignar a la mochila
+     *
+     * @return String retorna un mensaje con la opcion de agregado, o si no fue posible agregar
+
+     */
 
     @Override
     @Transactional
@@ -46,6 +65,15 @@ public class BagServiceImpl implements BagService{
 
         return "Item no valid to add to the bag";
     }
+    /**
+     * @author Pedro Aldama
+     * @param type Tipo de item que se agregara, puede ser Consumable o Evolution
+     * @param item Nombre del item que se quiere asignar a la mochila
+     *
+     * @return boolean la funcion se encarga de remover un item de la mochila
+     * esto pasa cuando se le da a un pokemon y necesitamos solo el boolean
+
+     */
 
     @Override
     @Transactional
@@ -64,6 +92,15 @@ public class BagServiceImpl implements BagService{
         }
         return false;
     }
+    /**
+     * @author Pedro Aldama
+     * @param type Tipo de item que se agregara, puede ser Consumable o Evolution
+     * @param item Nombre del item que se quiere asignar a la mochila
+     *
+     * @return String la funcion se encarga de remover un item de la mochila
+     * esto pasa cuando se le da a un pokemon, aqui ademas retorna un mensaje
+
+     */
 
     @Override
     @Transactional
@@ -83,13 +120,24 @@ public class BagServiceImpl implements BagService{
         }
         return "You don't have " + item + " in the bag";
     }
-
+    /**
+     * @author Pedro Aldama
+     *
+     * @return long la cantidad actual de dinero que tenemos en la mochila
+     */
     @Override
     @Transactional(readOnly = true)
     public long checkMoney() {
         return getBag().getMoney();
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param amount la cantidad que se modificara Money en nuestra mochila
+     * @param operation el tipo de operacion que se realizara a Money, add para agregar
+     *                  sub para restar
+     *
+     * @return long la cantidad actual de dinero que tenemos en la mochila despues de la operacion
+     */
     @Override
     @Transactional
     public long setNewValance( long amount, String operation) {
@@ -107,6 +155,12 @@ public class BagServiceImpl implements BagService{
         return bag.getMoney();
     }
 
+    /**
+     * @author Pedro Aldama
+     * @param user El nombre del usuario de quien se creara, en este caso si necesita que se le pase
+     *             el nombre porque se realiza cuando se registra un usuario nuevo
+     *
+     */
     @Override
     @Transactional
     public String createBag(String user) {

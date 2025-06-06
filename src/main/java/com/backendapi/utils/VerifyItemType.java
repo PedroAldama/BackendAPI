@@ -1,7 +1,12 @@
 package com.backendapi.utils;
 
 import java.util.Set;
+/**
+ * @author Pedro Aldama
+ * Clase para verificar el tipo de item, contiene una lista de posibles items
+ * Sirve para no repetir codigo dentro de Bag, shop o UserPokemon
 
+ */
 public class VerifyItemType {
     private static Set<String> consumable =  Set.of("cheri-berry","chesto-berry","pecha-berry","rawst-berry","aspear-berry"
     ,"leppa-berry","oran-berry","persim-berry","lum-berry","sitrus-berry");

@@ -19,6 +19,11 @@ public class QuestionServiceImpl implements QuestionService {
     private final RedisService redisService;
     private final PokeAPIService pokeAPIService;
     private final BagService bagService;
+    /**
+     * @author Pedro Aldama
+     * @return String busca un nombre al azar de un pokemon y revuelve sus letras para retonarlo
+     * lo guarda en redis para futuras consultas
+     */
     @Override
     public String generateQuestion() {
         String pokemon = pokeAPIService.getRandomPokemon();
@@ -26,7 +31,11 @@ public class QuestionServiceImpl implements QuestionService {
         redisService.addQuestionForUser(getAuthenticatedUsername(),pokemonShuffle,pokemon);
         return "Guess the pokemon " + pokemonShuffle + ". Respond in /answer Endpoint with the param answer";
     }
-
+    /**
+     * @author Pedro Aldama
+     * @param answer respuesta de usuario
+     * @return String retorna si la respuesta es correcta o no consultando en redis
+     */
     @Override
     public String answerQuestion(String answer) {
        String redisResponse = redisService.getAnswerFromUser(getAuthenticatedUsername());
@@ -43,6 +52,10 @@ public class QuestionServiceImpl implements QuestionService {
         return "Keep Trying, remember the shuffle is " + pokemonShuffle;
     }
 
+    /**
+     * @author Pedro Aldama
+     * @return String busca y retorna la respuesta en redis y borra la palabra en redis
+     */
     @Override
     public String getAnswer() {
         String redisResponse = redisService.getAnswerFromUser(getAuthenticatedUsername());
@@ -50,6 +63,7 @@ public class QuestionServiceImpl implements QuestionService {
         return "The answer for " + redisResponse.split(":")[0] + " is " + redisResponse.split(":")[1];
     }
 
+    //Funcion para revolver letras
     private String shuffleName(String pokemon) {
         List<Character> letters = new ArrayList<>();
         for (char c : pokemon.toCharArray()) {
