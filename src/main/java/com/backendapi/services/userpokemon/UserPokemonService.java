@@ -13,4 +13,7 @@ public interface UserPokemonService {
     String getItemFromUserPokemon(int id);
     String changePokemonName(String newName, long idPokemon);
     void changeStatus(String newStatus, long idPokemon);
+    String setPokemonInDayCare(long idPokemon);
+    String getPokemonFromDayCare(long idPokemon);
+
 }

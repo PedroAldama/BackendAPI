@@ -118,6 +118,16 @@ public class PokeAPIServiceImpl implements PokeAPIService{
     }
 
     @Override
+    public String getRandomPokemon() {
+        return webClient.get()
+                .uri("/pokemon/"+ (int)(Math.random() * 1025))
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .map(jn -> jn.get("name").asText())
+                .block();
+    }
+
+    @Override
     public Mono<List<String>> getAllPokemonByGeneration(String generation) {
         return webClient.get()
                 .uri("/generation/{gen}", generation)
@@ -160,8 +170,9 @@ public class PokeAPIServiceImpl implements PokeAPIService{
 
         EvolutionDetail details = pokemonEvolution.getFirst().getEvolutionDetails().getFirst();
         String trigger = details.getTrigger().getName();
+        String pokemonToEvolution = pokemonEvolution.getFirst().getSpecies().getName();
 
-        return triggerEvolution(details,trigger);
+        return triggerEvolution(details,trigger,pokemonToEvolution);
     }
 
     private List<EvolvesTo> findPokemonEvolvesTo(Chain chain, String target){
@@ -173,13 +184,13 @@ public class PokeAPIServiceImpl implements PokeAPIService{
         }
         return List.of();
     }
-    private String triggerEvolution(EvolutionDetail details, String trigger){
+    private String triggerEvolution(EvolutionDetail details, String trigger, String pokemonToEvolution){
 
 
         if ("level-up".equals(trigger)) {
-            return  trigger + ", Level : " + details.getMinLevel();
+            return  trigger + ", Level : " + details.getMinLevel() + "_" + pokemonToEvolution;
         } else if ("use-item".equals(trigger) && details.getItem() != null) {
-            return trigger + ", Item : " + details.getItem().getName();
+            return trigger + ", Item : " + details.getItem().getName() + "_" + pokemonToEvolution;
         } else {
             return trigger;
         }

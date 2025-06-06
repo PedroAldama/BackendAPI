@@ -19,4 +19,5 @@ public interface PokeAPIService {
     Mono<List<String>> getAllPokemonByGeneration(String generation);
     Map<Integer,String> getAllPokemonIdAndNameByGeneration(String generation);
     TypesResponse getAllPokemonByType(String type);
+    String getRandomPokemon();
 }

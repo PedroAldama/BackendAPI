@@ -7,6 +7,7 @@ import com.backendapi.entities.Users;
 import com.backendapi.repositories.UserPokemonRepository;
 import com.backendapi.services.bag.BagService;
 import com.backendapi.services.pokeapi.PokeAPIService;
+import com.backendapi.services.redis.RedisService;
 import com.backendapi.services.users.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
     private final UserPokemonRepository userPokemonRepository;
     private final UsersService usersService;
     private final BagService bagService;
+    private final RedisService redisService;
 
     @Override
     @Transactional
@@ -36,7 +38,7 @@ public class UserPokemonServiceImpl implements UserPokemonService {
             UserPokemon userPokemon = UserPokemon.builder()
                     .idPokemon(pokemon.getId())
                     .user(userDB)
-                    .currentExperience(pokemon.getBaseExperience())
+                    .currentExperience(0)
                     .maxExperience(pokemon.getBaseExperience())
                     .currentLife(pokemon.getStats().getFirst().getBaseStat())
                     .maxLife(pokemon.getStats().getFirst().getBaseStat())
@@ -124,6 +126,40 @@ public class UserPokemonServiceImpl implements UserPokemonService {
         pokemon.setStatus(newStatus);
         userPokemonRepository.save(pokemon);
     }
+
+    @Override
+    public String setPokemonInDayCare(long idPokemon) {
+        if(userPokemonRepository.findStatusById(idPokemon).equals("PC")){
+            userPokemonRepository.setStatus("DC",idPokemon);
+            return redisService.addPokemonToDayCare(getUser(),idPokemon);
+        }
+        return "Your Pokemon is not available to DayCare";
+    }
+
+    @Override
+    public String getPokemonFromDayCare(long idPokemon) {
+        String response = redisService.removePokemonFromRoom(getUser(),idPokemon);
+        String message = "Here is your pokemon!!";
+        if(response.split(":").length < 2){
+            return response;
+        }
+        int experience =Integer.parseInt(response.split(":")[1]) * 30;
+        UserPokemon pokemon = getUserPokemon(getUser(), (int) idPokemon);
+        pokemon.setCurrentExperience(experience + pokemon.getCurrentExperience());
+        if(pokemon.getMaxExperience() < pokemon.getCurrentExperience()){
+            String evolutionTrigger = pokeAPIService.getEvolutionTrigger(idPokemon +"");
+            if(evolutionTrigger.contains("Level")){
+                String pokemonName = evolutionTrigger.split("_")[1];
+                pokemon.setIdPokemon(pokeAPIService.getPokemonId(pokemonName));
+                pokemon.setName(pokemonName);
+                message+=", Congratulation, now you have a " + pokemonName;
+            }
+                pokemon.setCurrentExperience(pokemon.getMaxExperience());
+        }
+        userPokemonRepository.setStatus("PC",idPokemon);
+        return message;
+    }
+
 
     private Users getUserByUsername(String username) {
         return usersService.getUserByUsername(username);
